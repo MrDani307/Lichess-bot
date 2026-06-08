@@ -18,7 +18,7 @@ STOCKFISH_PATH = r"C:\Users\mi-li\Desktop\stockfish\stockfish-windows-x86-64-sse
 
 try:
     # МАКСИМАЛЬНЫЙ ИНТЕЛЛЕКТ (глубина 18), но с оптимизированным хэшем (512 МБ) и 2 потоками,
-    # чтобы меню не зависало при старте и запускалось мгновенно.
+    # чтобы меню запускалось мгновенно и процессор не уходил в 100% нагрузку.
     engine = Stockfish(path=STOCKFISH_PATH, depth=18)
     engine.update_engine_parameters({
         "Threads": 2, 
@@ -259,6 +259,8 @@ def get_square_screen_coords(sq_name):
     return x, y
 
 def click_chess_move(move_uci):
+    # Берем только первые 4 символа (координаты откуда и куда),
+    # игнорируя пятый символ превращения, так как выбор фигур в Lichess отключен
     x1, y1 = get_square_screen_coords(move_uci[:2])
     x2, y2 = get_square_screen_coords(move_uci[2:4])
     
@@ -267,10 +269,6 @@ def click_chess_move(move_uci):
     pyautogui.click(x1, y1)   
     time.sleep(0.06)          
     pyautogui.click(x2, y2)   
-    
-    if len(move_uci) == 5:
-        time.sleep(0.15)       
-        pyautogui.click(x2, y2) 
         
     pyautogui.moveTo(old_x, old_y)
 
